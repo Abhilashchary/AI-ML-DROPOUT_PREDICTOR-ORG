@@ -47,8 +47,8 @@ def generate_mailto_link(receiver_emails, high_risk_df):
     body_lines.append(f"{'ID':<8} {'Attendance':<12} {'Marks':<8} {'Fee Pending':<12}")
     body_lines.append("-"*45)
     for _, row in high_risk_df.iterrows():
-        body_lines.append(f"{row['student_id']:<8} {row['attendance']:<12.2f} \n "
-                          f"{row['avg_marks']:<8.2f} {row['fee_pending']:<12.2f}")
+        body_lines.append(f"{row['student_id']:<8} {row['attendance']:<12.2f}  "
+                          f"{row['avg_marks']:<8.2f} {row['fee_pending']:<12.2f} \n")
     
     # Footer
     body_lines.append("\n⚠️ Please take timely action for these students.")
@@ -172,3 +172,4 @@ if attendance_file and marks_file and fees_file:
             st.markdown(f'<a href="{mailto_link}" target="_blank">'
                         f'<button style="padding:10px 20px; background-color:#FF4C4C; color:white; border:none; border-radius:5px; cursor:pointer;">'
                         f'📧 Open Email Client</button></a>', unsafe_allow_html=True)
+
