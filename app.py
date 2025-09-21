@@ -39,16 +39,16 @@ def predict_row(model, row):
 def generate_mailto_link(receiver_emails, high_risk_df):
     subject = "🚨 High-Risk Students Alert"
 
-    # Header
+    # Only include student IDs
     body_lines = ["📢 High-Risk Students Report\n"]
-    body_lines.append("The following students have been flagged as high-risk:\n")
+    body_lines.append(f"Total High-Risk Students: {len(high_risk_df)}\n")
+    body_lines.append("Student IDs:\n")
     
-    # Aligned table
-    body_lines.append(f"{'ID':<8} {'Attendance':<12} {'Marks':<8} {'Fee Pending':<12}")
-    body_lines.append("-"*45)
-    for _, row in high_risk_df.iterrows():
-        body_lines.append(f"{row['student_id']:<8} {row['attendance']:<12.2f}  "
-                          f"{row['avg_marks']:<8.2f} {row['fee_pending']:<12.2f} \n")
+    # List all IDs (or first 50 if too many)
+    ids_to_send = high_risk_df['student_id'].astype(str).tolist()
+    if len(ids_to_send) > 50:
+        ids_to_send = ids_to_send[:50] + ["..."]
+    body_lines.append(", ".join(ids_to_send))
     
     # Footer
     body_lines.append("\n⚠️ Please take timely action for these students.")
@@ -141,7 +141,7 @@ if attendance_file and marks_file and fees_file:
     chart_data = result_df['risk'].value_counts().rename({0:'Low Risk',1:'High Risk'})
     st.bar_chart(chart_data)
     st.subheader("📈 Pie Chart of Risk")
-    st.pyplot(chart_data.plot.pie(autopct='%1.1f%%', colors=['#4CAF50','#FF4C4C']).figure)
+    st.pyplot(chart_data.plot.pie(autopct='%1.1f%%', colors=["#E94848","#68D85E"]).figure)
 
     # ----------------------------
     # Detailed Table
@@ -172,4 +172,3 @@ if attendance_file and marks_file and fees_file:
             st.markdown(f'<a href="{mailto_link}" target="_blank">'
                         f'<button style="padding:10px 20px; background-color:#FF4C4C; color:white; border:none; border-radius:5px; cursor:pointer;">'
                         f'📧 Open Email Client</button></a>', unsafe_allow_html=True)
-
